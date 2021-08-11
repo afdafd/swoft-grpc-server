@@ -9,6 +9,7 @@
       "grpc"
     ],
    "description": "swoft grpc custom server",
+   "minimum-stability": "dev",
    "license": "MIT",
     "authors": [
       {
