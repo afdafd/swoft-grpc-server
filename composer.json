@@ -1,5 +1,5 @@
 {
-    "name": "wz/grpc-server/swoft",
+    "name": "hzwz/grpc-server/swoft",
     "type": "library",
     "version": "v1.0.0",
     "keywords": [
