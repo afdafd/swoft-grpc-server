@@ -16,7 +16,6 @@
         "email": "ffffff_name@163.com"
       }
     ],
-    "minimum-stability": "dev",
     "require": {
       "php": ">=7.0",
       "google/protobuf": "^3.11",
