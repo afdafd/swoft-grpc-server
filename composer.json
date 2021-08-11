@@ -1,5 +1,5 @@
 {
-    "name": "swoft/grpc-server",
+    "name": "grpc-server/swoft",
     "type": "library",
     "description": "swoft grpc custom server",
     "license": "MIT",
