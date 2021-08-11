@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Swoft\Grpc\Server\Middleware;
+namespace Swoft\Grpc\Middleware;
 
 use Swoft\Grpc\Server\Exception\GrpcServerException;
 use Swoft\Grpc\Server\Router\RouteRegister;

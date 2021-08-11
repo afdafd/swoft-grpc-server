@@ -1,14 +1,14 @@
 <?php declare(strict_types=1);
 
 
-namespace Swoft\Grpc\Server\Command;
+namespace Swoft\Grpc\Command;
 
 use Swoft\Console\Annotation\Mapping\Command;
 use Swoft\Console\Annotation\Mapping\CommandMapping;
 use Swoft\Console\Annotation\Mapping\CommandOption;
 use Swoft\Server\Command\BaseServerCommand;
 use Swoft\Server\Exception\ServerException;
-use App\Grpc\Server\GrpcService;
+use Swoft\Grpc\Server\GrpcService;
 
 /**
  * Class GrpcServerCommand
