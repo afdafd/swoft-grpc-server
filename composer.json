@@ -1,21 +1,21 @@
 {
     "name": "hzwz/grpc-server",
+    "description": "swoft grpc custom server",
     "type": "library",
+    "license": "MIT",
     "keywords": [
       "php",
       "swoole",
       "swoft",
       "grpc"
     ],
-   "description": "swoft grpc custom server",
-   "minimum-stability": "dev",
-   "license": "MIT",
     "authors": [
       {
         "name": "fengzi",
         "email": "ffffff_name@163.com"
       }
     ],
+    "minimum-stability": "dev",
     "require": {
       "php": ">=7.0",
       "google/protobuf": "^3.11",
