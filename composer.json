@@ -1,8 +1,6 @@
 {
-    "name": "grpc-server/swoft",
+    "name": "wz/grpc-server/swoft",
     "type": "library",
-    "description": "swoft grpc custom server",
-    "license": "MIT",
     "version": "v1.0.0",
     "keywords": [
       "php",
@@ -10,6 +8,8 @@
       "swoft",
       "grpc"
     ],
+   "description": "swoft grpc custom server",
+   "license": "MIT",
     "authors": [
       {
         "name": "fengzi",
