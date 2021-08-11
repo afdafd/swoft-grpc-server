@@ -1,0 +1,30 @@
+{
+    "name": "swoft/grpc-server",
+    "description": "swoft grpc custom server",
+    "type": "library",
+    "license": "MIT",
+    "version": "v1.0.0",
+    "keywords": [
+      "php",
+      "swoole",
+      "swoft",
+      "grpc"
+    ],
+    "authors": [
+      {
+        "name": "fengzi",
+        "email": "ffffff_name@163.com"
+      }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+      "php": ">=7.0",
+      "google/protobuf": "^3.11",
+      "grpc/grpc": "^1.39"
+    },
+    "autoload": {
+      "psr-4": {
+        "Swoft\\Grpc\\Server\\": "src/"
+      }
+    }
+}
