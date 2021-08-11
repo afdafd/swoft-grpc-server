@@ -18,6 +18,8 @@
     "minimum-stability": "dev",
     "require": {
       "php": ">=7.0",
+      "swoft/framework": "~2.0.11",
+      "swoft/connection-pool": "~2.0.11",
       "google/protobuf": "^3.11",
       "grpc/grpc": "^1.39"
     },
