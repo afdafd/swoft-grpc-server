@@ -1,7 +1,7 @@
 {
-    "name": "swoft_grpc_server",
-    "description": "swoft grpc custom server",
+    "name": "swoft/grpc-server",
     "type": "library",
+    "description": "swoft grpc custom server",
     "license": "MIT",
     "version": "v1.0.0",
     "keywords": [
