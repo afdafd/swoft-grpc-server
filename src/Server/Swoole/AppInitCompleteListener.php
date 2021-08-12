@@ -3,7 +3,7 @@
 
 namespace Swoft\Grpc\Server\Swoole;
 
-use Swoft\Grpc\Server\Middleware\MiddlewareRegister;
+use Swoft\Grpc\Middleware\MiddlewareRegister;
 use Swoft\Grpc\Server\Exception\GrpcServerException;
 use Swoft\Grpc\Server\Router\Router;
 use Swoft\Grpc\Server\Router\RouteRegister;

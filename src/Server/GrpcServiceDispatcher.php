@@ -14,6 +14,8 @@ use Swoft\Http\Message\Request;
 use Swoft\Http\Message\Response;
 use Swoft\Log\Helper\Log;
 use Swoft\Grpc\Server\GrpcServiceHandler;
+use Swoft\Swoft;
+use Swoft\SwoftEvent;
 
 /**
  * Class GrpcServiceDispatcher
@@ -58,6 +60,9 @@ class GrpcServiceDispatcher extends AbstractDispatcher
             $this->trailerSet($swooleResponse, $e);
         } finally {
             \bean(ResponseEmitter::class)->emit($response, $swooleResponse);
+            
+            \Swoft::trigger(SwoftEvent::COROUTINE_DEFER);
+            \Swoft::trigger(SwoftEvent::COROUTINE_COMPLETE);
             //$response->quickSend($response);
         }
     }
