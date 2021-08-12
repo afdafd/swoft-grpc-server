@@ -1,12 +1,12 @@
 <?php declare(strict_types=1);
 
 
-namespace Swoft\Grpc\Middleware;
+namespace Hzwz\Grpc\Server\Middleware;
 
-use Swoft\Grpc\Server\Exception\GrpcServerException;
-use Swoft\Grpc\Server\Contract\MiddlewareInterface;
-use Swoft\Grpc\Server\Contract\RequestHandlerInterface;
-use Swoft\Grpc\Server\Router\Router;
+use Hzwz\Grpc\Server\Exception\GrpcServerException;
+use Hzwz\Grpc\Server\Contract\MiddlewareInterface;
+use Hzwz\Grpc\Server\Contract\RequestHandlerInterface;
+use Hzwz\Grpc\Server\Router\Router;
 use Psr\Http\Message\RequestInterface as PsrRequestInterface;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 use Swoft\Bean\Annotation\Mapping\Bean;

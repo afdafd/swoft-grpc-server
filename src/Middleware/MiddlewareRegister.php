@@ -1,9 +1,9 @@
 <?php declare(strict_types=1);
 
-namespace Swoft\Grpc\Middleware;
+namespace Hzwz\Grpc\Server\Middleware;
 
-use Swoft\Grpc\Server\Exception\GrpcServerException;
-use Swoft\Grpc\Server\Router\RouteRegister;
+use Hzwz\Grpc\Server\Exception\GrpcServerException;
+use Hzwz\Grpc\Server\Router\RouteRegister;
 use function array_unique;
 
 /**

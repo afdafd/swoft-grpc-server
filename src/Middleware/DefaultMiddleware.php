@@ -1,9 +1,9 @@
 <?php declare(strict_types=1);
 
-namespace Swoft\Grpc\Middleware;
+namespace Hzwz\Grpc\Server\Middleware;
 
 
-use Swoft\Grpc\Server\Parser;
+use Hzwz\Grpc\Server\Parser;
 use Google\Protobuf\Internal\Message;
 use Google\Protobuf\Internal\Message as ProtobufMessage;
 use phpDocumentor\Reflection\Types\Context;
@@ -11,25 +11,25 @@ use phpDocumentor\Reflection\Types\False_;
 use Psr\Http\Message\ResponseInterface;
 use ReflectionException;
 use Swoft\Bean\BeanFactory;
-use Swoft\Grpc\Server\Router\Router;
+use Hzwz\Grpc\Server\Router\Router;
 use Swoft\Http\Message\Request;
 use Swoft\Http\Message\Stream\Stream;
 use Swoft\Stdlib\Helper\PhpHelper;
 use Swoft\Bean\Annotation\Mapping\Bean;
 use Swoft\Http\Message\Request as SwoftRequest;
-use Swoft\Grpc\Server\Contract\MiddlewareInterface;
-use Swoft\Grpc\Server\Exception\GrpcServerException;
+use Hzwz\Grpc\Server\Contract\MiddlewareInterface;
+use Hzwz\Grpc\Server\Exception\GrpcServerException;
 use Psr\Http\Message\RequestInterface as PsrRequestInterface;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 //use Psr\Http\Server\RequestHandlerInterface as PsrRequestHandlerInterface;
-use Swoft\Grpc\Server\Contract\RequestHandlerInterface;
+use Hzwz\Grpc\Server\Contract\RequestHandlerInterface;
 use function context;
 use function method_exists;
 use function sprintf;
 
 /**
  * Class DefaultMiddleware
- * @package Swoft\Grpc\Middleware
+ * @package Hzwz\Grpc\Server\Middleware
  *
  * @Bean()
  */

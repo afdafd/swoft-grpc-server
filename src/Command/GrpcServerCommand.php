@@ -1,18 +1,18 @@
 <?php declare(strict_types=1);
 
 
-namespace Swoft\Grpc\Command;
+namespace Hzwz\Grpc\Server\Command;
 
 use Swoft\Console\Annotation\Mapping\Command;
 use Swoft\Console\Annotation\Mapping\CommandMapping;
 use Swoft\Console\Annotation\Mapping\CommandOption;
 use Swoft\Server\Command\BaseServerCommand;
 use Swoft\Server\Exception\ServerException;
-use Swoft\Grpc\Server\GrpcService;
+use Hzwz\Grpc\Server\GrpcService;
 
 /**
  * Class GrpcServerCommand
- * @package Swoft\Grpc\Server\Command
+ * @package Hzwz\Grpc\Server\Command
  *
  * @Command("grpc", coroutine=false, desc="Provide some commands to manage swoft GRPC server")
  *
