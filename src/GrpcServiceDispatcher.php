@@ -4,7 +4,7 @@
 namespace Hzwz\Grpc\Server;
 
 use Hzwz\Grpc\Server\Middleware\DefaultMiddleware;
-use Hzwz\Grpc\Server\Middleware\RouterValidatorMiddleware;
+use Hzwz\Grpc\Server\Middleware\UserMiddleware;
 use Psr\Http\Message\ResponseInterface;
 use Swoft\Bean\Annotation\Mapping\Bean;
 use Swoft\Bean\BeanFactory;
@@ -73,7 +73,7 @@ class GrpcServiceDispatcher extends AbstractDispatcher
     public function preMiddleware(): array
     {
         return [
-            RouterValidatorMiddleware::class
+          UserMiddleware::class
         ];
     }
 
