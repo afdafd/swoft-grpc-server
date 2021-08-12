@@ -3,8 +3,8 @@
 
 namespace Swoft\Grpc\Server;
 
-use Swoft\Grpc\Server\Middleware\DefaultMiddleware;
-use Swoft\Grpc\Server\Middleware\RouterValidatorMiddleware;
+use Swoft\Grpc\Middleware\DefaultMiddleware;
+use Swoft\Grpc\Middleware\RouterValidatorMiddleware;
 use Psr\Http\Message\ResponseInterface;
 use Swoft\Bean\Annotation\Mapping\Bean;
 use Swoft\Bean\BeanFactory;
@@ -60,7 +60,7 @@ class GrpcServiceDispatcher extends AbstractDispatcher
             $this->trailerSet($swooleResponse, $e);
         } finally {
             \bean(ResponseEmitter::class)->emit($response, $swooleResponse);
-            
+
             \Swoft::trigger(SwoftEvent::COROUTINE_DEFER);
             \Swoft::trigger(SwoftEvent::COROUTINE_COMPLETE);
             //$response->quickSend($response);

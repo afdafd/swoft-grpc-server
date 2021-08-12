@@ -14,8 +14,6 @@ use function bean;
 /**
  * Class Request
  * @package Swoft\Grpc\Server
- *
- * @Bean(scope=Bean::PROTOTYPE)
  */
 class Request implements RequestInterface
 {

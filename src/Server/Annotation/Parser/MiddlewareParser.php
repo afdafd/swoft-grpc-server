@@ -1,9 +1,9 @@
 <?php declare(strict_types=1);
 
-namespace App\Grpc\Server\Annotation\Parser;
+namespace Swoft\Grpc\Server\Annotation\Parser;
 
 use Swoft\Grpc\Server\Annotation\Mapping\Middleware;
-use Swoft\Grpc\Server\Middleware\MiddlewareRegister;
+use Swoft\Grpc\Middleware\MiddlewareRegister;
 use Swoft\Annotation\Annotation\Mapping\AnnotationParser;
 use Swoft\Annotation\Annotation\Parser\Parser;
 

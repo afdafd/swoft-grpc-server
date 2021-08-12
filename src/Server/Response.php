@@ -11,8 +11,6 @@ use Swoft\Grpc\Server\Error;
 /**
  * Class Response
  * @package Swoft\Grpc\Server
- *
- * @Bean(scope=Bean::PROTOTYPE)
  */
 class Response implements ResponseInterface
 {

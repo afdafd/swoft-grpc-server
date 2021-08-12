@@ -5,8 +5,6 @@ namespace Swoft\Grpc\Server;
 use Swoft\Bean\Annotation\Mapping\Bean;
 use Swoft\Server\Exception\ServerException;
 use Swoft\Server\Server;
-//use Swoft\Stdlib\Helper\Arr;
-//use Swoole\Server as SwooleServer;
 
 /**
  * Class GrpcService
