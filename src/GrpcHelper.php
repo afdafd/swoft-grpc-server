@@ -22,10 +22,6 @@ class GrpcHelper
       $method = substr($path, strripos($path, '/') + 1);
     }
 
-    if (!empty($method)) {
-      return lcfirst($method);
-    }
-
     return $method;
   }
 }
