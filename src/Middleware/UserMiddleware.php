@@ -6,6 +6,7 @@ namespace Hzwz\Grpc\Server\Middleware;
 use Hzwz\Grpc\Server\Exception\GrpcServerException;
 use Hzwz\Grpc\Server\Contract\MiddlewareInterface;
 use Hzwz\Grpc\Server\Contract\RequestHandlerInterface;
+use Hzwz\Grpc\Server\GrpcHelper;
 use Hzwz\Grpc\Server\GrpcServiceHandler;
 use Hzwz\Grpc\Server\Router\Router;
 use Psr\Http\Message\RequestInterface as PsrRequestInterface;
@@ -32,7 +33,7 @@ class UserMiddleware implements MiddlewareInterface
   public function process(PsrRequestInterface $request, RequestHandlerInterface $requestHandler): PsrResponseInterface
   {
     $grpcRouter = $request->getUri()->getPath();
-    $method = $this->getRequestClassMethod($grpcRouter);
+    $method = GrpcHelper::getRequestClassMethod($grpcRouter);
 
     $grpcServerRouter = \bean('grpcServerRouter');
     $grpcServerRouter = $grpcServerRouter->match($grpcRouter);
@@ -51,25 +52,5 @@ class UserMiddleware implements MiddlewareInterface
     }
 
     return $requestHandler->handle($request);
-  }
-
-  /**
-   * 获取请求类方法
-   *
-   * @param string $path
-   * @return false|string
-   */
-  private function getRequestClassMethod(string $path)
-  {
-    $method = '';
-    if (strripos($path, '/') !== false) {
-      $method = substr($path, strripos($path, '/') + 1);
-    }
-
-    if (!empty($method)) {
-      return lcfirst($method);
-    }
-
-    return $method;
   }
 }

@@ -3,6 +3,7 @@
 namespace Hzwz\Grpc\Server\Middleware;
 
 
+use Hzwz\Grpc\Server\GrpcHelper;
 use Hzwz\Grpc\Server\Parser;
 use Google\Protobuf\Internal\Message;
 use phpDocumentor\Reflection\Types\Context;
@@ -55,7 +56,6 @@ class DefaultMiddleware implements MiddlewareInterface
    */
   private function handler(PsrRequestInterface $request): PsrResponseInterface
   {
-    //$method = $request->getMethod();
     $router = $request->getUri()->getPath();
 
     [$status, $className] = $request->getAttribute(Request::ROUTER_ATTRIBUTE);
@@ -98,17 +98,9 @@ class DefaultMiddleware implements MiddlewareInterface
   private function getReflectionClassAndMethod(string $router, string $className): array
   {
     $object = BeanFactory::getBean($className);
+    $method = GrpcHelper::getRequestClassMethod($router);
 
-    $method = '';
-    if (strripos($router, '/') !== false) {
-      $method = substr($router, strripos($router, '/') + 1);
-    }
-
-    if (empty($method)) {
-      throw new GrpcServerException("grpcMethodError: 方法错误");
-    }
-
-    return [$object, lcfirst($method)];
+    return [$object, $method];
   }
 
   /**
@@ -163,7 +155,7 @@ class DefaultMiddleware implements MiddlewareInterface
   }
 
   /**
-   * 从元数据容器中获取方法定义。如果容器中不存在元数据，则会解析它并保存到容器中，然后返回它。
+   * 从元数据容器中获取方法定义
    *
    * @param string $class
    * @param string $method
@@ -171,11 +163,6 @@ class DefaultMiddleware implements MiddlewareInterface
    */
   private function getOrParse(string $class, string $method): array
   {
-//        $key = $class .'::'. $method;
-//        if(!empty(context()->get($key))) {
-//            return context()->get($key);
-//        }
-
     $parameters = (new \ReflectionClass($class))->getMethod($method)->getParameters();
     $definitions = [];
 
@@ -209,7 +196,6 @@ class DefaultMiddleware implements MiddlewareInterface
       }
     }
 
-    //context()->setMulti($key, $definitions);
     return $definitions;
   }
 
