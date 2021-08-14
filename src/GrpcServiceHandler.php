@@ -3,16 +3,14 @@
 
 namespace Hzwz\Grpc\Server;
 
-use Swoft\Bean\Annotation\Mapping\Bean;
 use Swoft\Bean\BeanFactory;
+use Swoft\Bean\Annotation\Mapping\Bean;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 use Swoft\Bean\Concern\PrototypeTrait;
 use Hzwz\Grpc\Server\Contract\MiddlewareInterface;
-use Hzwz\Grpc\Server\Contract\RequestInterface;
-use Hzwz\Grpc\Server\Contract\ResponseInterface;
-use Psr\Http\Message\RequestInterface as PsrRequestInterface;
-use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 use Hzwz\Grpc\Server\Exception\GrpcServerException;
-use Hzwz\Grpc\Server\Contract\RequestHandlerInterface;
+use Hzwz\Grpc\Server\Contract\GrpcRequestHandlerInterface;
 
 /**
  * Class GrpcServiceHandler
@@ -20,7 +18,7 @@ use Hzwz\Grpc\Server\Contract\RequestHandlerInterface;
  *
  * @Bean()
  */
-class GrpcServiceHandler implements RequestHandlerInterface
+class GrpcServiceHandler implements GrpcRequestHandlerInterface
 {
     use PrototypeTrait;
 
@@ -63,10 +61,10 @@ class GrpcServiceHandler implements RequestHandlerInterface
     /**
      * 中间件处理
      *
-     * @param PsrRequestInterface $request
-     * @return PsrResponseInterface
+     * @param RequestInterface $request
+     * @return ResponseInterface
      */
-    public function handle(PsrRequestInterface $request): PsrResponseInterface
+    public function handle(RequestInterface $request): ResponseInterface
     {
         //处理路由请求默认中间件
         $middleware = $this->middlewares[$this->offset] ?? $this->defaultMiddleware;
@@ -92,10 +90,10 @@ class GrpcServiceHandler implements RequestHandlerInterface
     {
         $offset = $offset ?? $this->offset;
         if ($offset > $this->offset) {
-            throw new GrpcServerException('grpcMiddlewareError: Insert middleware offset must more than ' . $this->offset);
+            throw new GrpcServerException('grpcMiddlewareError: 插入的offset错误，所插入的值不能大于已存在的： ' . $this->offset);
         }
 
-        // Insert middlewares
+        //添加用户的自定义中间件
         array_splice($this->middlewares, $offset, 0, $middlewares);
     }
 }

@@ -94,7 +94,7 @@ class MiddlewareRegister
     {
         foreach (self::$middlewares as $className => $middlewares) {
             if (!RouteRegister::hasRouteByClassName($className)) {
-                throw new GrpcServerException(sprintf('`@Service` is undefined on class(%s)', $className));
+                throw new GrpcServerException(sprintf('`@GrpcService` 在 class(%s) 上未定义', $className));
             }
 
             $classMiddlewares  = $middlewares['class'] ?? [];

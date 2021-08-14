@@ -3,18 +3,18 @@
 
 namespace Hzwz\Grpc\Server\Contract;
 
-use Psr\Http\Message\RequestInterface as PsrRequestInterface;
-use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
-use Hzwz\Grpc\Server\Contract\RequestHandlerInterface;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
+use Hzwz\Grpc\Server\Contract\GrpcRequestHandlerInterface;
 
 interface MiddlewareInterface
 {
     /**
      * 程序处理
      *
-     * @param PsrRequestInterface $request
-     * @param RequestHandlerInterface $requestHandler
-     * @return PsrResponseInterface
+     * @param RequestInterface $request
+     * @param GrpcRequestHandlerInterface $requestHandler
+     * @return ResponseInterface
      */
-    public function process(PsrRequestInterface $request, RequestHandlerInterface $requestHandler): PsrResponseInterface;
+    public function process(RequestInterface $request, GrpcRequestHandlerInterface $requestHandler): ResponseInterface;
 }

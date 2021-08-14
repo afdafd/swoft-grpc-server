@@ -5,11 +5,9 @@ namespace Hzwz\Grpc\Server;
 
 use Hzwz\Grpc\Server\Middleware\DefaultMiddleware;
 use Hzwz\Grpc\Server\Middleware\UserMiddleware;
-use Psr\Http\Message\ResponseInterface;
 use Swoft\Bean\Annotation\Mapping\Bean;
 use Swoft\Bean\BeanFactory;
 use Swoft\Concern\AbstractDispatcher;
-use Swoft\Log\Debug;
 use Swoft\Http\Message\Request;
 use Swoft\Http\Message\Response;
 use Swoft\Log\Helper\Log;
@@ -35,7 +33,10 @@ class GrpcServiceDispatcher extends AbstractDispatcher
      */
     public function dispatch(...$params): void
     {
-        /*** @var Request $request */
+        /**
+         * @var Request  $request
+         * @var Response $response
+         */
         [$request, $response] = $params;
 
         $swooleResponse = $response->getCoResponse();
@@ -43,7 +44,6 @@ class GrpcServiceDispatcher extends AbstractDispatcher
         try {
             $handler = GrpcServiceHandler::new($this->requestMiddleware(), $this->defaultMiddleware);
 
-            /** @var Response $response **/
             $response = $handler->handle($request);
             $this->trailerSet($swooleResponse);
         } catch (\Throwable $e) {

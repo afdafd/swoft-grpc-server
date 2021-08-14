@@ -3,6 +3,7 @@
 namespace Hzwz\Grpc\Server\Swoole;
 
 
+use Swoft\Http\Server\HttpContext;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 use Swoft\Context\Context;
@@ -56,9 +57,7 @@ class RequestListener implements RequestInterface
         $psr7Response = PsrResponse::new($response);
 
         //设置上下文
-        Context::set(
-            ServiceContext::new($psr7Request, $psr7Response)
-        );
+        Context::set(HttpContext::new($psr7Request, $psr7Response));
 
         return [$psr7Request, $psr7Response];
     }

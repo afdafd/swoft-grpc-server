@@ -5,12 +5,12 @@ namespace Hzwz\Grpc\Server\Middleware;
 
 use Hzwz\Grpc\Server\Exception\GrpcServerException;
 use Hzwz\Grpc\Server\Contract\MiddlewareInterface;
-use Hzwz\Grpc\Server\Contract\RequestHandlerInterface;
+use Hzwz\Grpc\Server\Contract\GrpcRequestHandlerInterface;
 use Hzwz\Grpc\Server\GrpcHelper;
 use Hzwz\Grpc\Server\GrpcServiceHandler;
 use Hzwz\Grpc\Server\Router\Router;
-use Psr\Http\Message\RequestInterface as PsrRequestInterface;
-use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 use Swoft\Bean\Annotation\Mapping\Bean;
 use Swoft\Http\Message\Request;
 
@@ -23,21 +23,21 @@ use Swoft\Http\Message\Request;
 class UserMiddleware implements MiddlewareInterface
 {
   /**
-   * 用户中间件处理
+   * 用户发起的grpc服务请求的基本处理
    *
-   * @param PsrRequestInterface $request
-   * @param RequestHandlerInterface $requestHandler
-   * @return PsrResponseInterface
-   * @throws GrpcException
+   * @param RequestInterface $request
+   * @param GrpcRequestHandlerInterface $requestHandler
+   * @return ResponseInterface
    */
-  public function process(PsrRequestInterface $request, RequestHandlerInterface $requestHandler): PsrResponseInterface
+  public function process(RequestInterface $request, GrpcRequestHandlerInterface $requestHandler): ResponseInterface
   {
-    $grpcRouter = $request->getUri()->getPath();
-    $method = GrpcHelper::getRequestClassMethod($grpcRouter);
-
     $grpcServerRouter = \bean('grpcServerRouter');
+
+    $grpcRouter = $request->getUri()->getPath();
     $grpcServerRouter = $grpcServerRouter->match($grpcRouter);
+
     $request = $request->withAttribute(Request::ROUTER_ATTRIBUTE, $grpcServerRouter);
+    context()->setRequest($request);
 
     [$status, $className] = $grpcServerRouter;
 
@@ -46,9 +46,9 @@ class UserMiddleware implements MiddlewareInterface
     }
 
     //添加用户中间件
-    $middlewares = MiddlewareRegister::getMiddlewares($className, $method);
-    if (!empty($middlewares) && $requestHandler instanceof GrpcServiceHandler) {
-      $requestHandler->insertMiddlewares($middlewares);
+    $grpcMiddlewares = MiddlewareRegister::getMiddlewares($className, GrpcHelper::getRequestClassMethod($grpcRouter));
+    if (!empty($grpcMiddlewares) && $requestHandler instanceof GrpcServiceHandler) {
+      $requestHandler->insertMiddlewares($grpcMiddlewares);
     }
 
     return $requestHandler->handle($request);

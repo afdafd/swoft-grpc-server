@@ -21,7 +21,7 @@ use Hzwz\Grpc\Server\Contract\MiddlewareInterface;
 use Hzwz\Grpc\Server\Exception\GrpcServerException;
 use Psr\Http\Message\RequestInterface as PsrRequestInterface;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
-use Hzwz\Grpc\Server\Contract\RequestHandlerInterface;
+use Hzwz\Grpc\Server\Contract\GrpcRequestHandlerInterface;
 use function context;
 use function method_exists;
 use function sprintf;
@@ -42,7 +42,7 @@ class DefaultMiddleware implements MiddlewareInterface
    * @return PsrRequestInterface
    * @throws GrpcServerException
    */
-  public function process(PsrRequestInterface $request, RequestHandlerInterface $requestHandler): PsrResponseInterface
+  public function process(PsrRequestInterface $request, GrpcRequestHandlerInterface $requestHandler): PsrResponseInterface
   {
     return $this->handler($request);
   }
