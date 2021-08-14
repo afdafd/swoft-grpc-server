@@ -8,6 +8,7 @@ use Hzwz\Grpc\Server\Middleware\UserMiddleware;
 use Swoft\Bean\Annotation\Mapping\Bean;
 use Swoft\Bean\BeanFactory;
 use Swoft\Concern\AbstractDispatcher;
+use Swoft\Context\Context;
 use Swoft\Http\Message\Request;
 use Swoft\Http\Message\Response;
 use Swoft\Log\Helper\Log;
@@ -60,9 +61,8 @@ class GrpcServiceDispatcher extends AbstractDispatcher
             $this->trailerSet($swooleResponse, $e);
         } finally {
             \bean(ResponseEmitter::class)->emit($response, $swooleResponse);
+            $this->clearHandle();
 
-            \Swoft::trigger(SwoftEvent::COROUTINE_DEFER);
-            \Swoft::trigger(SwoftEvent::COROUTINE_COMPLETE);
             //$response->quickSend($response);
         }
     }
@@ -101,5 +101,14 @@ class GrpcServiceDispatcher extends AbstractDispatcher
             $swooleResponse->trailer('grpc-status', '200');
             $swooleResponse->trailer('grpc-message', '');
         }
+    }
+
+  /**
+   * 清除处理
+   */
+    protected function clearHandle()
+    {
+      \Swoft::trigger(SwoftEvent::COROUTINE_DEFER);
+      \Swoft::trigger(SwoftEvent::COROUTINE_COMPLETE);
     }
 }

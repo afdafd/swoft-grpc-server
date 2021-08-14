@@ -76,6 +76,9 @@ class DefaultMiddleware implements MiddlewareInterface
     //protobuf解码
     $params = $this->parseParameters($className, $method, $request);
 
+    //请求类字段属性和值处理
+    $this->requestClassPropertiesHandle($params, $request);
+
     //调用内部服务类
     $result = PhpHelper::call([$object, $method], ...$params);
 
@@ -83,6 +86,7 @@ class DefaultMiddleware implements MiddlewareInterface
       return $this->handleResponse(null, 500);
     }
 
+    //返回响应
     return $this->handleResponse($result);
   }
 
@@ -197,6 +201,40 @@ class DefaultMiddleware implements MiddlewareInterface
     }
 
     return $definitions;
+  }
+
+  /**
+   * 获取请求类的属性值
+   *
+   * @param $params
+   * @param $request
+   * @return void
+   * @throws ReflectionException
+   */
+  protected function requestClassPropertiesHandle($params, $request)
+  {
+    $requestData = [];
+
+    foreach ($params as $key => $objName) {
+      $obj = new \ReflectionClass($objName);
+
+      foreach ($obj->getProperties() as $property) {
+        $property->setAccessible(true);
+
+        //略过静态属性
+        if ($property->isStatic()) {
+          continue;
+        }
+
+        $field = GrpcHelper::camelize($property->getName());
+        $requestData[$property->getName()] = $objName->{'get' . ucfirst($field)}();
+      }
+    }
+
+    $request = $request->withParsedBody($requestData);
+    context()->setRequest($request);
+
+    unset($requestData);
   }
 
   /**

@@ -24,4 +24,17 @@ class GrpcHelper
 
     return $method;
   }
+
+  /**
+   * 下划线转驼峰式
+   *
+   * @param string $words
+   * @param string $separator
+   * @return string
+   */
+  public static function camelize(string $words, string $separator = '_'): string
+  {
+    $words = $separator . str_replace($separator, " ", strtolower($words));
+    return ltrim(str_replace(" ", "", ucwords($words)), $separator);
+  }
 }
