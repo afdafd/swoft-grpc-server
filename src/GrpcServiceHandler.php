@@ -5,7 +5,7 @@ namespace Hzwz\Grpc\Server;
 
 use Swoft\Bean\BeanFactory;
 use Swoft\Bean\Annotation\Mapping\Bean;
-use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Swoft\Bean\Concern\PrototypeTrait;
 use Hzwz\Grpc\Server\Contract\MiddlewareInterface;
@@ -61,10 +61,10 @@ class GrpcServiceHandler implements GrpcRequestHandlerInterface
     /**
      * 中间件处理
      *
-     * @param RequestInterface $request
+     * @param ServerRequestInterface $request
      * @return ResponseInterface
      */
-    public function handle(RequestInterface $request): ResponseInterface
+    public function handle(ServerRequestInterface $request): ResponseInterface
     {
         //处理路由请求默认中间件
         $middleware = $this->middlewares[$this->offset] ?? $this->defaultMiddleware;
