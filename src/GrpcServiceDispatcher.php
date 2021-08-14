@@ -72,9 +72,7 @@ class GrpcServiceDispatcher extends AbstractDispatcher
      */
     public function preMiddleware(): array
     {
-        return [
-          UserMiddleware::class
-        ];
+        return [];
     }
 
     /**
@@ -82,7 +80,9 @@ class GrpcServiceDispatcher extends AbstractDispatcher
      */
     public function afterMiddleware(): array
     {
-        return [];
+        return [
+          UserMiddleware::class
+        ];
     }
 
     /**
