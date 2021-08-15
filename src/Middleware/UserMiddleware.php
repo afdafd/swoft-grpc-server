@@ -4,6 +4,7 @@
 namespace Hzwz\Grpc\Server\Middleware;
 
 use Google\Protobuf\Internal\Message;
+use Google\Protobuf\Internal\RepeatedField;
 use Hzwz\Grpc\Server\Exception\GrpcServerException;
 use Hzwz\Grpc\Server\Contract\MiddlewareInterface;
 use Hzwz\Grpc\Server\Contract\GrpcRequestHandlerInterface;
@@ -148,7 +149,14 @@ class UserMiddleware implements MiddlewareInterface
         }
 
         $field = GrpcHelper::camelize($property->getName());
-        $requestData[$property->getName()] = $objName->{'get' . ucfirst($field)}();
+        $propertyValue = $objName->{'get'.ucfirst($field)}();
+
+        //Repeated类型字段处理
+        if ($propertyValue instanceof RepeatedField) {
+          $propertyValue = GrpcHelper::jsonDecodeHandle($propertyValue->getIterator()->current());
+        }
+
+        $requestData[$property->getName()] = $propertyValue;
       }
     }
 

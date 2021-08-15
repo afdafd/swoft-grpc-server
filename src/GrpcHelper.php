@@ -37,4 +37,20 @@ class GrpcHelper
     $words = $separator . str_replace($separator, " ", strtolower($words));
     return ltrim(str_replace(" ", "", ucwords($words)), $separator);
   }
+
+  /**
+   * json数据decode处理
+   *
+   * @param $data
+   * @return array|mixed
+   */
+  public static function jsonDecodeHandle($data)
+  {
+    $jsonData = \json_decode($data, true);
+    if (\json_last_error()) {
+      return [\json_last_error_msg()];
+    }
+
+    return $jsonData;
+  }
 }
