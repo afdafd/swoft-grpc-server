@@ -40,25 +40,14 @@ class GrpcServiceDispatcher extends AbstractDispatcher
          */
         [$request, $response] = $params;
 
-        $swooleResponse = $response->getCoResponse();
-
         try {
             $handler = GrpcServiceHandler::new($this->requestMiddleware(), $this->defaultMiddleware);
-
             $response = $handler->handle($request);
-            $this->trailerSet($swooleResponse);
+            $swooleResponse = $this->trailerSet($response->getCoResponse());
         } catch (\Throwable $e) {
-            Log::error("GrpcResponseError", [
-                'errorMsg'   => $e->getMessage(),
-                'errorSite'  => $e->getFile(),
-                'errorLine'  => $e->getLine(),
-                'errorTrace' => $e->getTraceAsString(),
-                'time'       => date('Y-m-d H:i:s')
-            ]);
-
             $response->withAddedHeader('Content-Type', 'application/grpc');
             $response->withAddedHeader('trailer', 'grpc-status, grpc-message');
-            $this->trailerSet($swooleResponse, $e);
+            $swooleResponse = $this->trailerSet($response->getCoResponse(), $e);
         } finally {
             \bean(ResponseEmitter::class)->emit($response, $swooleResponse);
             $this->clearHandle();
@@ -90,17 +79,27 @@ class GrpcServiceDispatcher extends AbstractDispatcher
      *
      * @param \Swoole\Http\Response $swooleResponse
      * @param null $throw
-     * @return void
+     * @return \Swoole\Http\Response
      */
-    protected function trailerSet(\Swoole\Http\Response $swooleResponse, $throw = null)
+    protected function trailerSet(\Swoole\Http\Response $swooleResponse, $throw = null): \Swoole\Http\Response
     {
         if (!is_null($throw)) {
             $swooleResponse->trailer('grpc-status',  $throw->getCode() <= 0 ? '500' : (string)$throw->getCode());
             $swooleResponse->trailer('grpc-message', $throw->getMessage());
+
+          Log::error("GrpcResponseError", [
+            'errorMsg'   => $throw->getMessage(),
+            'errorSite'  => $throw->getFile(),
+            'errorLine'  => $throw->getLine(),
+            'errorTrace' => $throw->getTraceAsString(),
+            'time'       => date('Y-m-d H:i:s')
+          ]);
         } else {
             $swooleResponse->trailer('grpc-status', '200');
-            $swooleResponse->trailer('grpc-message', '');
+            $swooleResponse->trailer('grpc-message', 'success');
         }
+
+        return $swooleResponse;
     }
 
   /**

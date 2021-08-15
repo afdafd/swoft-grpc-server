@@ -68,22 +68,17 @@ class DefaultMiddleware implements MiddlewareInterface
 
     if (!method_exists($object, $method)) {
       throw new GrpcServerException(
-        sprintf('Method(%s::%s) 不存在', PsrRequestInterface::class, $method),
-        404
-      );
+        sprintf('Method(%s::%s) 不存在', $router, $method), 500);
     }
 
-    //protobuf解码
-    $params = $this->parseParameters($className, $method, $request);
-
-    //请求类字段属性和值处理
-    $this->requestClassPropertiesHandle($params, $request);
-
     //调用内部服务类
+    $params = context()->get('grpcPareDataAfter');
     $result = PhpHelper::call([$object, $method], ...$params);
+    context()->unset('grpcPareDataAfter');
 
     if (!$result instanceof Message) {
-      return $this->handleResponse(null, 500);
+      throw new GrpcServerException(
+        sprintf('响应类(%s) 不是Message类型', (string)$result), 500);
     }
 
     //返回响应
@@ -105,136 +100,6 @@ class DefaultMiddleware implements MiddlewareInterface
     $method = GrpcHelper::getRequestClassMethod($router);
 
     return [$object, $method];
-  }
-
-  /**
-   * 解析grpc参数
-   *
-   * @param string $controller
-   * @param string $action
-   * @param array $arguments
-   * @return array
-   */
-  private function parseParameters(string $class, string $action, Request $request): array
-  {
-    $injections = [];
-    $definitions = $this->getOrParse($class, $action);
-
-    foreach ($definitions ?? [] as $definition) {
-      if (! is_array($definition)) {
-        throw new GrpcServerException('grpcError: 无效的方法定义.');
-      }
-
-      if (!isset($definition['type']) || !isset($definition['name'])) {
-        $injections[] = null;
-        continue;
-      }
-
-      $injections[] = value(function () use ($definition, $request) {
-        switch ($definition['type']) {
-          case 'object':
-            $class = new \ReflectionClass($definition['ref']);
-
-            $parentClass = $class->getParentClass();
-            if ($parentClass && $parentClass->getName() === Message::class) {
-              $stream = $request->getBody();
-              return Parser::deserializeMessage([$class->getName(), null], $stream->getContents());
-            }
-
-            if (!BeanFactory::getBean($definition['ref']) && !$definition['allowsNull']) {
-              throw new GrpcServerException(
-                sprintf('grpcError: Argument %s invalid, object %s not found.',
-                  $definition['name'], $definition['ref'])
-              );
-            }
-
-            return BeanFactory::getBean($definition['ref']);
-          default:
-            throw new GrpcServerException('grpcError: 无效的方法定义.');
-        }
-      });
-    }
-
-    return $injections;
-  }
-
-  /**
-   * 从元数据容器中获取方法定义
-   *
-   * @param string $class
-   * @param string $method
-   * @return array
-   */
-  private function getOrParse(string $class, string $method): array
-  {
-    $parameters = (new \ReflectionClass($class))->getMethod($method)->getParameters();
-    $definitions = [];
-
-    foreach ($parameters as $parameter) {
-      $type = $parameter->getType()->getName();
-      switch ($type) {
-        case 'int':
-        case 'float':
-        case 'string':
-        case 'array':
-        case 'bool':
-          $definition = [
-            'type' => $type,
-            'name' => $parameter->getName(),
-            'ref' => '',
-            'allowsNull' => $parameter->allowsNull(),
-          ];
-          if ($parameter->isDefaultValueAvailable()) {
-            $definition['defaultValue'] = $parameter->getDefaultValue();
-          }
-          $definitions[] = $definition;
-          break;
-        default:
-          $definitions[] = [
-            'type' => 'object',
-            'name' => $parameter->getName(),
-            'ref' => $parameter->getClass()->getName() ?? null,
-            'allowsNull' => $parameter->allowsNull(),
-          ];
-          break;
-      }
-    }
-
-    return $definitions;
-  }
-
-  /**
-   * 获取请求类的属性值
-   *
-   * @param $params
-   * @param $request
-   * @return void
-   * @throws ReflectionException
-   */
-  protected function requestClassPropertiesHandle($params, $request)
-  {
-    $requestData = [];
-
-    foreach ($params as $key => $objName) {
-      $obj = new \ReflectionClass($objName);
-
-      foreach ($obj->getProperties() as $property) {
-        $property->setAccessible(true);
-
-        //略过静态属性
-        if ($property->isStatic()) {
-          continue;
-        }
-
-        $field = GrpcHelper::camelize($property->getName());
-        $requestData[$property->getName()] = $objName->{'get' . ucfirst($field)}();
-      }
-    }
-
-    $request = $request->withParsedBody($requestData);
-    context()->setRequest($request);
-
-    unset($requestData);
   }
 
   /**
