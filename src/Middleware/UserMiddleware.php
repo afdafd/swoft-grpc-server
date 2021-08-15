@@ -153,7 +153,13 @@ class UserMiddleware implements MiddlewareInterface
 
         //Repeated类型字段处理
         if ($propertyValue instanceof RepeatedField) {
-          $propertyValue = GrpcHelper::jsonDecodeHandle($propertyValue->getIterator()->current());
+          $value = [];
+
+          foreach ($propertyValue->getIterator() as $iterator) {
+            $value[] = $iterator->current();
+          }
+
+          $propertyValue = $value;
         }
 
         $requestData[$property->getName()] = $propertyValue;
