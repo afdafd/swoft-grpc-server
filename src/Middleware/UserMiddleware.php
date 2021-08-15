@@ -155,8 +155,8 @@ class UserMiddleware implements MiddlewareInterface
         if ($propertyValue instanceof RepeatedField) {
           $value = [];
 
-          foreach ($propertyValue->getIterator() as $iterator) {
-            $value[] = $iterator->current();
+          foreach ($propertyValue->getIterator() as $iterParam) {
+            $value[] = $iterParam;
           }
 
           $propertyValue = $value;
