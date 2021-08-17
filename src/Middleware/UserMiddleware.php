@@ -37,7 +37,7 @@ class UserMiddleware implements MiddlewareInterface
     $grpcServerRouter = \bean('grpcServerRouter');
 
     $grpcRouter = $request->getUri()->getPath();
-    $grpcServerRouter = $grpcServerRouter->match($grpcRouter);
+    $grpcServerRouter = $grpcServerRouter->match($request->getMethod() .'_'. $grpcRouter);
 
     $request = $request->withAttribute(Request::ROUTER_ATTRIBUTE, $grpcServerRouter);
     context()->setRequest($request);

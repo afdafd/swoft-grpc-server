@@ -24,6 +24,11 @@ class GrpcService
      */
     protected $prefix = '';
 
+  /**
+   * @var string
+   */
+    protected $method = 'POST';
+
     /**
      * Service constructor.
      *
@@ -54,5 +59,13 @@ class GrpcService
         }
 
         return rtrim($_prefix, '.') . '/';
+    }
+
+  /**
+   * @return string
+   */
+    public function getMethod(): string
+    {
+      return $this->method;
     }
 }

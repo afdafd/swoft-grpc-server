@@ -28,7 +28,7 @@ class GrpcServiceParser extends Parser
         $reflectionClass = new \ReflectionClass($this->className);
 
         foreach ($reflectionClass->getMethods() as $name => $value) {
-            $prefix = $annotationObject->getPrefix() . $value->getName();
+            $prefix = $annotationObject->getMethod() .'_'. $annotationObject->getPrefix() . $value->getName();
             RouteRegister::register($prefix, $this->className);
         }
 
