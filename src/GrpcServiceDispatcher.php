@@ -95,8 +95,8 @@ class GrpcServiceDispatcher extends AbstractDispatcher
             'time'       => date('Y-m-d H:i:s')
           ]);
         } else {
-            $swooleResponse->trailer('grpc-status', '200');
-            $swooleResponse->trailer('grpc-message', 'success');
+            $swooleResponse->trailer('grpc-status', '0');
+            $swooleResponse->trailer('grpc-message', '');
         }
 
         return $swooleResponse;
