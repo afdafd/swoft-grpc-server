@@ -85,15 +85,14 @@ class GrpcServiceDispatcher extends AbstractDispatcher
     protected function trailerSet(\Swoole\Http\Response $swooleResponse, $throw = null): \Swoole\Http\Response
     {
         if (!is_null($throw)) {
+            Log::error("GrpcServerResponseError", [
+              'errorMsg'   => $throw->getMessage(),
+              'errorSite'  => $throw->getFile() .'|'. $throw->getLine(),
+              'time'       => date('Y-m-d H:i:s')
+            ]);
+
             $swooleResponse->trailer('grpc-status',  $throw->getCode() <= 0 ? '500' : (string)$throw->getCode());
             $swooleResponse->trailer('grpc-message', $throw->getMessage());
-
-          Log::error("GrpcResponseError", [
-            'errorMsg'   => $throw->getMessage(),
-            'errorSite'  => $throw->getFile(),
-            'errorLine'  => $throw->getLine(),
-            'time'       => date('Y-m-d H:i:s')
-          ]);
         } else {
             $swooleResponse->trailer('grpc-status', '0');
             $swooleResponse->trailer('grpc-message', '');
