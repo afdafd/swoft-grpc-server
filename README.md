@@ -13,46 +13,53 @@ composer下载：composer require hzwz/grpc-server dev-master
 - 说明：protos目录里是存放 *.proto相关文件。Services目录里是实现接口转换的
 #### *.proto文件定义实例：
 ````text
-syntax = "proto3";  //proto的语法定义，现在最新版本是3.
+syntax = "proto3";
 
-//包名称（对应的实际就是PHP的namespace命名空间地址）
 package Brother;
 
-//rpc服务（就是客户端需要调用服务端的接口服务类）
 service Agents {
-  rpc initProfitPersonInfo(AgentsRequest)          returns(AgentResponse);    //把运营商初始化为默认的分成人员
-  rpc getGroupIdsFromShare(AgentsRequest)          returns(AgentResponse);    //根据合伙人ID返回对应的分组ID集
-  rpc findOperatorByNickname(AgentsRequest)        returns(AgentResponse);
-  rpc findOperatorListByIds(AgentsRequest)         returns(AgentResponse);
-  rpc getInfo(AgentsRequest)                       returns(AgentResponse);
-  rpc getAgentRateByGroupId(AgentsRequest)         returns(AgentResponse);
-  rpc getMultiNameByIds(AgentsRequest)             returns(AgentResponse);
-  rpc getMaintenanceGroupIdList(AgentsRequest)     returns(AgentResponse);
-  rpc getCompositeUserInfo(AgentsRequest)          returns(AgentResponse);
-  rpc getPhoneRole(AgentsRequest)                  returns(AgentResponse);
-  rpc getOperatorRelationByUserType(AgentsRequest) returns(AgentResponse);
-  rpc changeOperatorIcOrCharge(AgentsRequest)      returns(AgentResponse);
+  rpc initProfitPersonInfo(initProfitPersonRequest) returns(initProfitPersonResponse);  //把运营商初始化为默认的分成人员
+  rpc getGroupIdsFromShare(getShareGroupListByShareUserRequest)  returns(getShareGroupListByShareUserResponse);  //根据合伙人ID返回对应的分组ID集
+  rpc getCompositeUserInfo(getCompositeUserInfoRequest) returns(getCompositeUserInfoResponse);  //通过用户类型和手机号获取对应用户信息
 }
 
-//请求消息体（客户端在发起grpc服务端接口调用时，需要传递的一个请求对象）
-message AgentsRequest {
-  int32 company_id = 1;                //公司ID
-  int32 u_type     = 2;                //用户类型
-  int64 u_id       = 3;                //用户ID
-  int32 group_id   = 4;                //设备组ID
-  string nickname  = 5;                //用户昵称
-  string phone     = 6;                //用户手机号
-  repeated string operator_ids = 7;    //运营商ID集
-  repeated string ids          = 8;    //用户ID集
+message baseField {
+    int64 u_id       = 1;
+    int32 u_type     = 2;
+    int32 company_id = 3;
 }
 
-//响应消息体（服务端在响应客户端时，所传递的一个响应对象）
-message AgentResponse {
-  int32  code          = 1;
-  string message       = 2;
-  int64  timestamp     = 3;
-  repeated string data = 4;
+//把运营商初始化为默认的分成人员
+message initProfitPersonRequest {
+    int32 group_id       = 1;
+    baseField baseFields = 2;
 }
+
+message initProfitPersonResponse {}
+
+//根据合伙人ID返回对应的分组ID集
+message getShareGroupListByShareUserRequest {
+  baseField baseFields = 1;
+}
+
+message getShareGroupListByShareUserResponse {
+    repeated string data = 1;
+}
+
+//通过用户类型和手机号获取对应用户信息
+message getCompositeUserInfoRequest {
+  int32 u_type     = 1;
+  int32 company_id = 2;
+  string phone     = 3;
+}
+
+message getCompositeUserInfoResponse {
+  string id         = 1;
+  string nickname   = 2;
+  string phone      = 3;
+  string headImgUrl = 4;
+}
+
 ````
 
 - 通过定义好的*.proto文件生成实际的代码：
