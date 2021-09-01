@@ -9,5 +9,5 @@ use Swoole\Http\Response;
 
 interface ResponseEmitterInterface
 {
-    public function emit(ResponseInterface $response, Response $swooleResponse, bool $withContent = true);
+    public function emit(ResponseInterface $response, Response $swooleResponse);
 }

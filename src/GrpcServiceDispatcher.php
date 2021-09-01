@@ -45,8 +45,9 @@ class GrpcServiceDispatcher extends AbstractDispatcher
             $response = $handler->handle($request);
             $swooleResponse = $this->trailerSet($response->getCoResponse());
         } catch (\Throwable $e) {
-            $response->withAddedHeader('Content-Type', 'application/grpc');
-            $response->withAddedHeader('trailer', 'grpc-status, grpc-message');
+          $response = \Swoft\Context\Context::get()->getResponse()
+            ->withAddedHeader('Content-Type', 'application/grpc')
+            ->withAddedHeader('trailer', 'grpc-status, grpc-message');
             $swooleResponse = $this->trailerSet($response->getCoResponse(), $e);
         } finally {
             \bean(ResponseEmitter::class)->emit($response, $swooleResponse);
@@ -91,7 +92,6 @@ class GrpcServiceDispatcher extends AbstractDispatcher
             'errorMsg'   => $throw->getMessage(),
             'errorSite'  => $throw->getFile(),
             'errorLine'  => $throw->getLine(),
-            'errorTrace' => $throw->getTraceAsString(),
             'time'       => date('Y-m-d H:i:s')
           ]);
         } else {

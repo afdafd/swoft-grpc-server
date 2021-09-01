@@ -8,6 +8,8 @@ use Hzwz\Grpc\Server\Contract\ResponseEmitterInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\UploadedFileInterface;
 use Swoft\Bean\Annotation\Mapping\Bean;
+use Swoft\Log\Helper\Log;
+use Swoole\Coroutine;
 use Swoole\Http\Response;
 
 /**
@@ -25,15 +27,22 @@ class ResponseEmitter implements ResponseEmitterInterface
      * @param Response $swooleResponse
      * @param bool $withContent
      */
-    public function emit(ResponseInterface $response, Response $swooleResponse, bool $withContent = true)
+    public function emit(ResponseInterface $response, Response $swooleResponse)
     {
+      if ($swooleResponse->isWritable()) {
         $this->buildSwooleResponse($swooleResponse, $response);
-
-        if ($withContent) {
-            $swooleResponse->end($response->getBody()->getContents());
-        } else {
-            $swooleResponse->end();
+        $swooleResponse->end($response->getBody()->getContents());
+      } else {
+        try {
+          $swooleResponse->setStatusCode(403);
+        } catch (\Throwable $throwable) {
+          Log::error("grpcServiceRequestResponseError", [
+            'errorMsg'    => $throwable->getMessage(),
+            'site'        => $throwable->getFile() .'|'. $throwable->getLine(),
+            'pcid_cid'    => Coroutine::getPcid() .'|'. Coroutine::getCid()
+          ]);
         }
+      }
     }
 
     /**
