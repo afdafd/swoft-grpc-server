@@ -152,17 +152,13 @@ class UserMiddleware implements MiddlewareInterface
         $propertyValue = $objName->{'get'.ucfirst($field)}();
 
         //Repeated类型字段处理
-        if ($propertyValue instanceof RepeatedField) {
-          $value = [];
+        $propertyValue = $this->repeatedFieldHandle($propertyValue);
 
-          foreach ($propertyValue->getIterator() as $iterParam) {
-            $value[] = $iterParam;
-          }
-
-          $propertyValue = $value;
+        //对象类型处理
+        $isObject = $this->objectFieldTypeHandle($propertyValue, $requestData);
+        if (!$isObject) {
+          $requestData[$property->getName()] = $propertyValue;
         }
-
-        $requestData[$property->getName()] = $propertyValue;
       }
     }
 
@@ -171,5 +167,64 @@ class UserMiddleware implements MiddlewareInterface
     context()->setMulti(['grpcPareDataAfter' => $params]);
 
     return $request;
+  }
+
+  /**
+   * 数组类型处理
+   *
+   * @param $propertyValue
+   * @return void
+   */
+  private function repeatedFieldHandle($propertyValue)
+  {
+    if (!$propertyValue instanceof RepeatedField) {
+      return $propertyValue;
+    }
+
+    $value = [];
+    foreach ($propertyValue->getIterator() as $iterParam) {
+      $value[] = $iterParam;
+    }
+
+    return $value;
+  }
+
+  /**
+   * 对象类型处理
+   *
+   * @param $propertyValue
+   * @param $requestData
+   * @return bool
+   */
+  private function objectFieldTypeHandle($propertyValue, &$requestData): bool
+  {
+    if (!is_object($propertyValue)) {
+      return false;
+    }
+
+    $obj = new \ReflectionClass($propertyValue);
+    foreach ($obj->getProperties() as $property) {
+      $property->setAccessible(true);
+
+      //略过静态属性
+      if ($property->isStatic()) {
+        continue;
+      }
+
+      $field = GrpcHelper::camelize($property->getName());
+      $prtyValue = $propertyValue->{'get'.ucfirst($field)}();
+
+      //Repeated类型处理
+      $prtyValue = $this->repeatedFieldHandle($prtyValue);
+
+      //对象类型处理
+      if (is_object($prtyValue)) {
+        $this->objectFieldTypeHandle($prtyValue, $requestData);
+      } else {
+        $requestData[$property->getName()] = $prtyValue;
+      }
+    }
+
+    return true;
   }
 }
